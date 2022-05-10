@@ -1,6 +1,10 @@
 #!/bin/sh /etc/rc.common
 
 
+# Init script to backup/restore the collectd RRD database, making it persist across (planned) reboots
+# https://github.com/sqrwf/openwrt-rrdbackup/
+
+
 # directory and file to backup to
 BACKUP_DIR=/etc/collectd
 BACKUP_FILE=rrdbackup.tgz
@@ -37,4 +41,3 @@ start() {
 stop() {
 	backup
 }
-
