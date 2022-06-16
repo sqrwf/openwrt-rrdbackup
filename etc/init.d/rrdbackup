@@ -1,37 +1,40 @@
 #!/bin/sh /etc/rc.common
 
 
-# Init script to backup/restore the collectd RRD database, making it persist across (planned) reboots
+# OpenWrt init.d script to backup/restore the collectd RRD database, to have it persist across (planned) reboots
 # https://github.com/sqrwf/openwrt-rrdbackup/
 
+# This is free and unencumbered software released into the public domain.
+# For more information, please refer to <http://unlicense.org/>
 
-# directory and file to backup to
+
+# backup target directory and file
 BACKUP_DIR=/etc/collectd
 BACKUP_FILE=rrdbackup.tgz
 
-# the directory containing RRD files (usually /tmp/rrd)
-# needs to be relative to root, i.e. no slash in front (to mitigate tar "leading '/'" warning)
+# directory containing collectd's RRD files (usually /tmp/rrd)
+# root relative, i.e. no slash in front (to mitigate tar "leading '/'" warning)
 RRD_DIR=tmp/rrd
-
 
 # queue rrdbackup to start before collectd starts (80) and stop after collect stops (10):
 START=79
 STOP=11
 
-# command to manually backup database (e.g. from cronjob)
+# "backup" command to manually backup database (e.g. from cronjob)
+# for completeness, "restore" is also possible although I struggle to come up with a use case
 EXTRA_COMMANDS="backup restore"
 EXTRA_HELP="        backup          Backup current rrd database"
 
 backup() {
-	local TMP_FILE=$(mktemp -u)
-	tar -czf $TMP_FILE -C / $RRD_DIR
-	mkdir -p $BACKUP_DIR
-	mv $TMP_FILE "$BACKUP_DIR/$BACKUP_FILE"
-	rm -f $TMP_FILE
+	TMP_FILE=$(mktemp -u)
+	tar -czf "$TMP_FILE" -C / "$RRD_DIR"
+	mkdir -p "$BACKUP_DIR"
+	mv "$TMP_FILE" "$BACKUP_DIR/$BACKUP_FILE"
+	rm -f "$TMP_FILE"
 }
 
 restore() {
-	[[ -f "$BACKUP_DIR/$BACKUP_FILE" ]] && tar -xzf "$BACKUP_DIR/$BACKUP_FILE" -C /
+	[ -f "$BACKUP_DIR/$BACKUP_FILE" ] && tar -xzf "$BACKUP_DIR/$BACKUP_FILE" -C /
 }
 
 start() {
