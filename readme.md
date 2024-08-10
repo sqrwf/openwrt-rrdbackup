@@ -1,5 +1,10 @@
 # OpenWrt RRDBackup
 
+## Note/update
+
+This script has been integrated, along with some improvements, into [`luci-app-statistics` starting with OpenWrt 23.05.2](https://github.com/openwrt/luci/pull/6646), making that the the preferred and easiest way to have your RRD database persist across reboots.
+
+However, this script is neither outdated nor obsolete. It is still useful if you want to adjust backup parameters, don't have Luci and/or Luci-Statistics installed, or prefer to keep the backup functionality standalone.
 
 ## Rationale
 
